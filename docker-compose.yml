@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000" # Map the port your app runs on to a port on the host
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:latest
+    ports:
+      - "5432:5432" # Map PostgreSQL port to host
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379" # Map Redis port to host
+    env_file:
+      - .env
+
+volumes:
+  postgres_data:
