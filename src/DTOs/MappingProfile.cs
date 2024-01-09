@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using rpglms.src.models;
-using rpglms.DTOs;
+using rpglms_backend.src.models;
+using rpglms_backend.DTOs;
 
 namespace rpglms
 {

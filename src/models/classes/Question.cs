@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
-using rpglms.src.models.enums;
+using rpglms_backend.src.models.enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace rpglms.src.models
+namespace rpglms_backend.src.models
 {
     public class Question
     {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using rpglms.src.models;
+using rpglms_backend.src.models;
 
-namespace rpglms.src.data
+namespace rpglms_backend.src.data
 {
     public class DatabaseContext : IdentityDbContext<AppUser>
     {

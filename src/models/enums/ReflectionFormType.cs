@@ -1,4 +1,4 @@
-﻿namespace rpglms.src.models.enums
+﻿namespace rpglms_backend.src.models.enums
 {
     public enum ReflectionFormType
     {

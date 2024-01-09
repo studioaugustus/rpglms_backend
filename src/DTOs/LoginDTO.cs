@@ -1,4 +1,4 @@
-﻿namespace rpglms.src.DTOs
+﻿namespace rpglms_backend.src.DTOs
 {
     public class LoginDto
     {

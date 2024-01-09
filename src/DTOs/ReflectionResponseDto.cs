@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace rpglms.DTOs
+namespace rpglms_backend.DTOs
 {
     public class ReflectionResponseDto
     {

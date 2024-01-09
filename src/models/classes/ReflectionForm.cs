@@ -1,6 +1,6 @@
-﻿using rpglms.src.models.enums;
+﻿using rpglms_backend.src.models.enums;
 
-namespace rpglms.src.models
+namespace rpglms_backend.src.models
 {
     public class ReflectionForm
     {

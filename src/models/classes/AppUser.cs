@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace rpglms.src.models
+namespace rpglms_backend.src.models
 {
     public class AppUser : IdentityUser
     {

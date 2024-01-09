@@ -1,6 +1,6 @@
-using rpglms.src.models.enums;
+using rpglms_backend.src.models.enums;
 
-namespace rpglms.DTOs
+namespace rpglms_backend.DTOs
 {
     public class ReflectionFormDto
     {

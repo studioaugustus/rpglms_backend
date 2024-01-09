@@ -2,7 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using rpglms.src.data;
+using rpglms_backend.src.data;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 

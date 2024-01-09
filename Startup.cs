@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using rpglms.Auth;
-using rpglms.src.auth;
-using rpglms.src.data;
-using rpglms.src.models;
-using rpglms.src.shared;
+using rpglms_backend.src.shared;
+using rpglms_backend.src.auth;
+using rpglms_backend.src.models;
+using rpglms_backend.src.data;
 using System.Text;
+using rpglms_backend.src.middleware;
+using StackExchange.Redis;
 
 namespace rpglms
 {
@@ -21,7 +22,11 @@ namespace rpglms
             string postgresDb = Configuration["POSTGRES_DB"] ?? string.Empty;
             string postgresUser = Configuration["POSTGRES_USER"] ?? string.Empty;
             string postgresPassword = Configuration["POSTGRES_PASSWORD"] ?? string.Empty;
+            string redisConnectionString = Configuration["REDIS_CONNECTION_STRING"] ?? "localhost";
             string jwtSecret = Configuration["JWT_SECRET"] ?? string.Empty;
+            string jwtIssuer = Configuration["JWT_ISSUER"] ?? string.Empty;
+            string jwtAudience = Configuration["JWT_AUDIENCE"] ?? string.Empty;
+            int jwtExpirationMinutes = int.TryParse(Configuration["JWT_EXPIRATION_MINUTES"], out int tempVal) ? tempVal : 60;
             string[] corsOrigins = Configuration["CORS_ORIGINS"]?.Split(',') ?? [];
 
             if (string.IsNullOrEmpty(postgresDb) || string.IsNullOrEmpty(postgresUser) || string.IsNullOrEmpty(postgresPassword))
@@ -44,10 +49,18 @@ namespace rpglms
                 options.UseNpgsql($"Host=db;Database={postgresDb};Username={postgresUser};Password={postgresPassword}"));
 
             // Auth Services
-            services.AddScoped<AuthServices>();
+            services.AddScoped<AuthService>();
 
             // JWT Authentication
-            services.AddSingleton(new JwtConfig { Secret = jwtSecret });
+            services.AddSingleton(new JwtConfig
+            {
+                Secret = jwtSecret,
+                Issuer = jwtIssuer,
+                Audience = jwtAudience,
+                ExpirationMinutes = jwtExpirationMinutes
+            });
+
+            services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -58,8 +71,10 @@ namespace rpglms
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSecret)),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
+                    ValidateIssuer = true,
+                    ValidIssuer = jwtIssuer,
+                    ValidateAudience = true,
+                    ValidAudience = jwtAudience,
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero
                 };
@@ -129,6 +144,7 @@ namespace rpglms
                 app.UseHsts(); // HTTP Strict Transport Security
             }
             app.UseHttpsRedirection();
+            app.UseMiddleware<RateLimitingMiddleware>();
             app.UseMiddleware<ErrorHandler>();
             // Routing, static files, and other middleware configurations
             app.UseCors("AllowSpecificOrigins");

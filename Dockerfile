@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["rpglms.csproj", "."]
-RUN dotnet restore "./rpglms.csproj"
+COPY ["rpglms_backend.csproj", "."]
+RUN dotnet restore "./rpglms_backend.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "rpglms.csproj" -c Release -o /app/build
+RUN dotnet build "rpglms_backend_backend.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "rpglms.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "rpglms_backend.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "rpglms.dll"]
+ENTRYPOINT ["dotnet", "rpglms_backend.dll"]

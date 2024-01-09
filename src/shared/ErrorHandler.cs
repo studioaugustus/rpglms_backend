@@ -1,36 +1,40 @@
 using System.Net;
 using Newtonsoft.Json;
 
-//error middleware
-public class ErrorHandler(RequestDelegate next)
+namespace rpglms_backend.src.shared
 {
-    private readonly RequestDelegate _next = next;
 
-    public async Task Invoke(HttpContext context)
+    //error middleware
+    public class ErrorHandler(RequestDelegate next)
     {
-        try
+        private readonly RequestDelegate _next = next;
+
+        public async Task Invoke(HttpContext context)
         {
-            await _next(context);
+            try
+            {
+                await _next(context);
+            }
+            catch (Exception ex)
+            {
+                await HandleExceptionAsync(context, ex);
+            }
         }
-        catch (Exception ex)
+
+        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            await HandleExceptionAsync(context, ex);
+            // Log the exception here
+            // ...
+
+            HttpStatusCode code = HttpStatusCode.InternalServerError; // 500 if unexpected
+
+            if (exception is UnauthorizedAccessException) code = HttpStatusCode.Unauthorized;
+            else if (exception is ArgumentException) code = HttpStatusCode.BadRequest;
+
+            string? result = JsonConvert.SerializeObject(new { error = exception.Message });
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)code;
+            return context.Response.WriteAsync(result);
         }
-    }
-
-    private static Task HandleExceptionAsync(HttpContext context, Exception exception)
-    {
-        // Log the exception here
-        // ...
-
-        HttpStatusCode code = HttpStatusCode.InternalServerError; // 500 if unexpected
-
-        if (exception is UnauthorizedAccessException) code = HttpStatusCode.Unauthorized;
-        else if (exception is ArgumentException) code = HttpStatusCode.BadRequest;
-
-        string? result = JsonConvert.SerializeObject(new { error = exception.Message });
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)code;
-        return context.Response.WriteAsync(result);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace rpglms.src.models
+namespace rpglms_backend.src.models
 {
     public class Investigation
     {

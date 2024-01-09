@@ -1,4 +1,4 @@
-namespace rpglms.src.shared
+namespace rpglms_backend.src.shared
 {
     public interface IEmailSender
     {

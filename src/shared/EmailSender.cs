@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Mail;
 
-namespace rpglms.src.shared
+namespace rpglms_backend.src.shared
 {
     public class EmailSender(string smtpServer, int smtpPort, string smtpUser, string smtpPass) : IEmailSender
     {
